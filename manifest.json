@@ -4,14 +4,14 @@
   "start_url": "./",
   "display": "standalone",
   "orientation": "landscape",
-  "background_color": "#0a0a0a",
-  "theme_color": "#000000",
+  "background_color": "d3cea6",
+  "theme_color": "d3cea6",
   "scope": "./",
   "icons": [
     {
-      "src": "icon-512.png",
+      "src": "icon-512.jpeg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ]
