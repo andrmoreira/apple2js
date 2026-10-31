@@ -1,0 +1,37 @@
+body {
+  background: #c4c1a0;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.case {
+  width: 600px;
+  background: #d3cea6;
+  border: 2px solid #a8a48c;
+  padding: 10px;
+}
+
+.lid {
+  font-family: sans-serif;
+  font-size: 14px;
+  letter-spacing: -0.5px;
+  padding: 6px 0 10px 4px;
+  user-select: none;
+}
+
+.bezel {
+  background: #000;
+  border: 6px solid #f0edd0;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+#screen {
+  width: 100%;
+  height: 384px;
+  display: block;
+  background: #000;
+  image-rendering: pixelated;
+}
