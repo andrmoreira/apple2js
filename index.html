@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=640">
+    <title>Apple ][ - Emulator</title>
+</head>
+<body>
+    <div class="case">
+        <div class="lid">apple ][ - Emulator</div>
+        <div class="bezel"><canvas id="screen" width="560" height="384"></canvas></div>
+        <div class="lower">
+            <div class="drive" id="drive1">
+                <div class="drive-slot"></div>
+                <div class="drive-row">
+                    <span class="led"></span>
+                    <span class="drive-text">DISK ][</span>
+                </div>
+            </div>
+        </div>
+        <input type="file" id="rom" hidden>
+    </div>
+
+    <textarea id="hiddenInput" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" style="position:absolute;left:-9999px;top:0;width:1px;height:1px;font-size:16px;"></textarea>
+
+    <script>
+        const hiddenInput = document.getElementById('hiddenInput');
+        const screen = document.getElementById('screen');
+        function openKeyboard() {
+            hiddenInput.value = '';
+            hiddenInput.focus({preventScroll:true});
+        }
+        screen.addEventListener('click', openKeyboard);
+        screen.addEventListener('touchend', (e) => { e.preventDefault(); openKeyboard(); });
+        hiddenInput.addEventListener('beforeinput', (e) => {
+            if (e.inputType === 'deleteContentBackward') {
+                e.preventDefault();
+                e.target.value = '';
+                if (window.pressEmuKey) window.pressEmuKey(8);
+            }
+        });
+        hiddenInput.addEventListener('input', (e) => {
+            let data = e.data;
+            if (data == null) {
+                const v = e.target.value;
+                if (!v) return;
+                data = v.slice(-1);
+            }
+            if (!data) { e.target.value = ''; return; }
+            e.target.value = '';
+            if (window.pressEmuKey) window.pressEmuKey(data);
+        });
+    </script>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>

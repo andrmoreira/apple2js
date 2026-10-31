@@ -1,0 +1,3 @@
+[submodule "lib/cpu6502"]
+	path = lib/cpu6502
+	url = https://github.com/andrmoreira/cpu6502.git
