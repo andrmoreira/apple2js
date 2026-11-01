@@ -1,3 +1,41 @@
 body {
     background: #c4c1a0;
+    margin: 0;
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+}
+
+.case {
+    width: 640px;
+    background: #c4c1a0;
+    padding: 12px;
+}
+
+.lid {
+    font-family: 'Motter Tektura', sans-serif;
+    font-size: 14px;
+    color: #44372c;
+    padding: 4px 8px 10px;
+}
+
+.bezel {
+    margin-top: 10px;
+    background: #000;
+    border: 6px solid #f0edd0;
+    border-top-color: #a8a588;
+    border-left-color: #a8a588;
+    border-right-color: #fffef2;
+    border-bottom-color: #fffef2;
+    border-radius: 10px;
+    padding: 6px;
+}
+
+#screen {
+    display: block;
+    width: 560px;
+    height: 384px;
+    background: #000;
+    image-rendering: pixelated;
+    border: none;
 }
