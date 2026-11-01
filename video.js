@@ -94,14 +94,31 @@ export class Video {
         const base = this.page === 1 ? 0x2000 : 0x4000;
         this.ctx.fillStyle = "#000";
         this.ctx.fillRect(0, 0, 560, 384);
-        this.ctx.fillStyle = "#33FF66";
-
+    
         for (let y=0; y < 192; y++) {
             for (let xByte=0; xByte < 40; xByte++) {
                 const addr = base + this.hiresOffset(y, xByte);
                 const byte = this.readMem(addr);
+                const palette = (byte & 0x80) ? 1 : 0;
+    
                 for (let bit=0; bit < 7; bit++) {
                     if (byte & (1 << bit)) {
+                        const x = xByte * 7 + bit;
+                        const left = bit > 0 ? (byte >> (bit - 1)) & 1 : 0;
+    
+                        let color;
+                        if (left) {
+                            color = "#FFF";
+                        } else {
+                            // isolated bit - artifact color
+                            if ((x & 1) === 0) {
+                                color = palette ? "#0B4FBA" : "#8C1D92";
+                            } else {
+                                color = palette ? "#FF6D00" : "#0CC00A";
+                            }
+                        }
+    
+                        this.ctx.fillStyle = color;
                         this.ctx.fillRect(xByte * 14 + bit * 2, y * 2, 2, 2);
                     }
                 }
