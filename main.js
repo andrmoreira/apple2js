@@ -25,7 +25,7 @@ function initAudio() {
     }
 }
 
-// Áudio ($C030)
+// Audio ($C030)
 bus.hookIO(0xC030, 0xC030, (addr, val, isWrite) => {
     if (!audioCtx) return;
 
@@ -48,11 +48,9 @@ bus.hookIO(0xC030, 0xC030, (addr, val, isWrite) => {
     osc.stop(now + 0.003);
 });
 
-// Vídeo ($C050-$C057)
+// Video ($C050-$C057)
 bus.hookIO(0xC050, 0xC057, (addr, val, isWrite) => {
-    if (isWrite || val !== undefined) {
-        video.write(addr);
-    }
+    video.write(addr);
 });
 
 let lastKeyTime = 0;
