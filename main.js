@@ -13,6 +13,42 @@ window._mem = mem;
 window._cpu = cpu;
 window._bus = bus;
 
+let audioCtx = null;
+let lastSpeakerState = 0;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+}
+
+// Áudio ($C030)
+bus.hookIO(0xC030, 0xC030, (addr, val, isWrite) => {
+    if (!audioCtx) return;
+
+    const now = audioCtx.currentTime;
+    lastSpeakerState = lastSpeakerState === 0 ? 1 : 0;
+
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(440, now);
+
+    gain.gain.setValueAtTime(0.08, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.003);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.003);
+});
+
+// Vídeo ($C050-$C057)
 bus.hookIO(0xC050, 0xC057, (addr, val, isWrite) => {
     if (isWrite || val !== undefined) {
         video.write(addr);
@@ -24,6 +60,7 @@ let clearTimer = null;
 
 function pressEmuKey(code)
 {
+    initAudio();
     let c = typeof code === 'string' ? code.charCodeAt(0) : code;
     if (c === 8 || c === 127) c = 8;
     if (c === 13 || c === 10) c = 13;
@@ -52,8 +89,14 @@ window.addEventListener('keydown', (e) => {
     }
 });
 
+canvas.addEventListener('click', initAudio);
+canvas.addEventListener('touchend', initAudio);
+
 const input = document.getElementById('rom');
-document.getElementById('drive1').onclick = () => input.click();
+document.getElementById('drive1').onclick = () => {
+    initAudio();
+    input.click();
+};
 
 function bootImage(buf)
 {
