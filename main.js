@@ -2,6 +2,7 @@ import {Bus} from './bus.js';
 import {Video} from './video.js';
 import {CPU6502} from './lib/cpu6502/cpu.js';
 import {Memory} from './memory.js';
+import {rom} from './rom.js';
 
 const canvas = document.getElementById('screen');
 const mem = new Memory();
@@ -138,6 +139,7 @@ input.onchange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const buf = new Uint8Array(await file.arrayBuffer());
+    await cacheRom(buf);
     bootImage(buf);
 };
 
@@ -157,5 +159,14 @@ function run()
     setTimeout(run, 1);
 }
 
-frame();
-run();
+function init() {
+    frame();
+    run();
+
+    if (rom) {
+        const buf = rom instanceof Uint8Array ? rom : new Uint8Array(rom);
+        bootImage(buf);
+    }
+}
+
+init();
