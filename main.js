@@ -139,7 +139,6 @@ input.onchange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const buf = new Uint8Array(await file.arrayBuffer());
-    await cacheRom(buf);
     bootImage(buf);
 };
 
