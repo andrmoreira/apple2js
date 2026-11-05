@@ -3,6 +3,9 @@ import {Video} from './video.js';
 import {CPU6502} from './lib/cpu6502/cpu.js';
 import {Memory} from './memory.js';
 import {rom} from './rom.js';
+import {mountKeyboard} from './keyboard.js';
+
+mountKeyboard('#keyboard');
 
 const canvas = document.getElementById('screen');
 const mem = new Memory();
@@ -13,6 +16,14 @@ const cpu = new CPU6502(mem);
 window._mem = mem;
 window._cpu = cpu;
 window._bus = bus;
+
+window.resetEmu = () => {
+    if (typeof cpu.cpuReset === 'function')
+        cpu.cpuReset();
+    else
+        cpu.cpuInit();
+    bus.key = 0;
+};
 
 let audioCtx = null;
 let lastSpeakerState = 0;
@@ -64,7 +75,7 @@ function pressEmuKey(code)
     if (c === 8 || c === 127) c = 8;
     if (c === 13 || c === 10) c = 13;
     if (c >= 97 && c <= 122) c -= 32;
-    if (c < 32 && c !== 13 && c !== 8) return;
+    if (c < 32 && c !== 7 && c !== 8 && c !== 9 && c !== 10 && c !== 11 && c !== 13 && c !== 21 && c !== 27) return;
     const now = Date.now();
     if (now - lastKeyTime < 120) return;
     lastKeyTime = now;
