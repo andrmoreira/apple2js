@@ -105,7 +105,6 @@ body {
 }
 
 .mn-btn[data-mn="RESET"],
-.mn-btn[data-mn="POWER"],
 .mn-btn[data-mn="CTRL"],
 .mn-btn[data-mn="SHIFT"],
 .mn-btn[data-mn="ESC"],
@@ -160,6 +159,25 @@ body {
     border-right: 6px solid #1a120a;
     border-bottom: 9px solid #1a120a;
     border-radius: 0;
+}
+
+.mn-btn[data-mn="POWER"] {
+    flex: 0 0 44px;
+    height: 44px;
+    aspect-ratio: 1 / 1;
+    background: #f0edd0;
+    color: #1a1a1a;
+    border: 2px solid #8a8570;
+    border-radius: 2px;
+    font-size: 10px;
+    box-shadow: none;
+}
+
+.mn-btn[data-mn="POWER"]:active,
+.mn-btn[data-mn="POWER"].mn-on {
+    background: #f0edd0;
+    border: 2px solid #8a8570;
+    box-shadow: none;
 }
 
 footer {

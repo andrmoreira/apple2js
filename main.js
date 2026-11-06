@@ -25,6 +25,26 @@ window.resetEmu = () => {
     bus.key = 0;
 };
 
+let powered = true;
+
+window.setPower = (on) => {
+    powered = on;
+    if (!on) {
+        mem.ram.fill(0, 0x0000, 0xC000);
+        mem.dirtyScanlines.fill(1);
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    } else {
+        if (rom) {
+            const buf = rom instanceof Uint8Array ? rom : new Uint8Array(rom);
+            bootImage(buf);
+        } else {
+            window.resetEmu();
+        }
+    }
+};
+
 let audioCtx = null;
 let lastSpeakerState = 0;
 
@@ -179,10 +199,10 @@ function run()
 function init() {
     frame();
     run();
-
-    if (rom) {
-        const buf = rom instanceof Uint8Array ? rom : new Uint8Array(rom);
-        bootImage(buf);
+    
+    document.body.classList.add('power-off');
+    if (typeof window.setPower === 'function') {
+        window.setPower(false);
     }
 }
 

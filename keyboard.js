@@ -59,6 +59,7 @@ const LAYOUT = [
         ['SHIFT', 'SHIFT']
     ],
     [
+        ['POWER', 'POWER'],
         [' ', ' ']
     ],
 ];
@@ -98,6 +99,14 @@ function findPair(name)
 // Key handling
 function onKey(name, btn)
 {
+    if (name === 'POWER') {
+        const isOff = document.body.classList.toggle('power-off');
+        btn.classList.toggle('mn-on', !isOff);
+        if (typeof window.setPower === 'function') {
+            window.setPower(!isOff);
+        }
+        return;
+    }
     
     if (name === 'SHIFT') {
         shifted = !shifted;
