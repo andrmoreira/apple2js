@@ -110,10 +110,17 @@ document.getElementById('drive1').onclick = () => {
 
 function bootImage(buf)
 {
-    if (buf.length > 4) {
+    if (buf.length >= 4) {
         const lo = buf[0] | (buf[1] << 8);
         const len = buf[2] | (buf[3] << 8);
-        const isBload = (len + 4 === buf.length) || (lo >= 0x0800 && lo < 0xC000 && len > 0 && len < 0x8000);
+        const availablePayload = buf.length - 4;
+        const loadEnd = lo + len;
+        const isBload =
+            len > 0 &&
+            len <= availablePayload &&
+            lo >= 0x0200 &&
+            loadEnd <= 0xC000;
+
         if (isBload) {
             for (let i=0; i<len; i++) {
                 mem.ram[lo+i] = buf[4+i];
