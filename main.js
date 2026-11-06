@@ -13,6 +13,10 @@ const bus = new Bus(mem);
 const video = new Video(canvas, bus);
 const cpu = new CPU6502(mem);
 
+// 1.022727 MHz / 60fps = 17045 cycles per frame
+const CYCLES_PER_FRAME = 17045;
+let lastTime = performance.now();
+
 window._mem = mem;
 window._cpu = cpu;
 window._bus = bus;
@@ -180,25 +184,40 @@ input.onchange = async (e) => {
     bootImage(buf);
 };
 
-function frame()
-{
-    video.render();
+function frame() {
+    if (powered) {
+        const now = performance.now();
+        lastTime = now;
+        let cyclesToRun = CYCLES_PER_FRAME;
+        let cycles = 0;
+        
+        while (cycles < cyclesToRun) {
+            try {
+                cycles += cpu.cpuStep() || 1;
+            } catch (e) {
+                cycles++;
+            }
+        }
+        video.render();
+    } else {
+        lastTime = performance.now();
+    }
     requestAnimationFrame(frame);
 }
 
-function run()
-{
-    for (let i=0; i<1000; i++) {
-        try {
-            cpu.cpuStep();
-        } catch (e) {}
-    }
-    setTimeout(run, 1);
-}
+//function run()
+//{
+//    for (let i=0; i<1000; i++) {
+//        try {
+//            cpu.cpuStep();
+//        } catch (e) {}
+//    }
+//    setTimeout(run, 1);
+//}
 
 function init() {
     frame();
-    run();
+    //run();
     
     document.body.classList.add('power-off');
     if (typeof window.setPower === 'function') {
