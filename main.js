@@ -1,5 +1,6 @@
 import {Bus} from './bus.js';
 import {Video} from './video.js';
+import {SpeakerAudio} from './audio.js';
 import {CPU6502} from './lib/cpu6502/cpu.js';
 import {Memory} from './memory.js';
 import {rom} from './rom.js';
@@ -11,6 +12,7 @@ const canvas = document.getElementById('screen');
 const mem = new Memory();
 const bus = new Bus(mem);
 const video = new Video(canvas, bus);
+const speaker = new SpeakerAudio();
 const cpu = new CPU6502(mem);
 
 // 1.022727 MHz / 60fps = 17045 cycles per frame
@@ -49,40 +51,8 @@ window.setPower = (on) => {
     }
 };
 
-let audioCtx = null;
-let lastSpeakerState = 0;
-
-function initAudio() {
-    if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
-}
-
 // Audio ($C030)
-bus.hookIO(0xC030, 0xC030, (addr, val, isWrite) => {
-    if (!audioCtx) return;
-
-    const now = audioCtx.currentTime;
-    lastSpeakerState = lastSpeakerState === 0 ? 1 : 0;
-
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(440, now);
-
-    gain.gain.setValueAtTime(0.08, now);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.003);
-
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    osc.start(now);
-    osc.stop(now + 0.003);
-});
+bus.hookIO(0xC030, 0xC030, () => speaker.toggle());
 
 // Video ($C050-$C057)
 bus.hookIO(0xC050, 0xC057, (addr, val, isWrite) => {
@@ -94,7 +64,7 @@ let clearTimer = null;
 
 function pressEmuKey(code)
 {
-    initAudio();
+    speaker.start();
     let c = typeof code === 'string' ? code.charCodeAt(0) : code;
     if (c === 8 || c === 127) c = 8;
     if (c === 13 || c === 10) c = 13;
@@ -123,12 +93,12 @@ window.addEventListener('keydown', (e) => {
     }
 });
 
-canvas.addEventListener('click', initAudio);
-canvas.addEventListener('touchend', initAudio);
+canvas.addEventListener('click', () => speaker.start());
+canvas.addEventListener('touchend', () => speaker.start());
 
 const input = document.getElementById('rom');
 document.getElementById('drive1').onclick = () => {
-    initAudio();
+    speaker.start();
     input.click();
 };
 
@@ -192,11 +162,16 @@ function frame() {
         let cycles = 0;
         
         while (cycles < cyclesToRun) {
+            let stepCycles = 1;
+
             try {
-                cycles += cpu.cpuStep() || 1;
+                stepCycles = cpu.cpuStep() || 1;
             } catch (e) {
-                cycles++;
+                stepCycles = 1;
             }
+
+            cycles += stepCycles;
+            speaker.advance(stepCycles);
         }
         video.render();
     } else {
