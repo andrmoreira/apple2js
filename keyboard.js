@@ -80,6 +80,47 @@ let controlled = false;
 let lastKey = null;
 let repeatTimer = null;
 
+const keyAudioContext = new (
+    window.AudioContext || window.webkitAudioContext
+)();
+
+let keySoundBuffer = null;
+const KEY_SOUND_START = 0.08;
+
+fetch(new URL('./tac.mp3', import.meta.url))
+    .then(response => {
+        if (!response.ok) throw new Error('Audio file not found');
+        return response.arrayBuffer();
+    })
+    .then(data => keyAudioContext.decodeAudioData(data))
+    .then(buffer => {
+        keySoundBuffer = buffer;
+    })
+    .catch(error => {
+        console.warn('Could not load tac.mp3:', error);
+    });
+
+function playKeySound()
+{
+    if (!keySoundBuffer) return;
+
+    const play = () => {
+        const source = keyAudioContext.createBufferSource();
+        source.buffer = keySoundBuffer;
+        source.connect(keyAudioContext.destination);
+
+        source.start(0, Math.min(KEY_SOUND_START, keySoundBuffer.duration));
+    };
+
+    if (keyAudioContext.state === 'running') {
+        play();
+    } else {
+        keyAudioContext.resume().then(play).catch(error => {
+            console.warn('Could not play tac.mp3:', error);
+        });
+    }
+}
+
 // Send to emulator
 function send(code)
 {
@@ -99,6 +140,8 @@ function findPair(name)
 // Key handling
 function onKey(name, btn)
 {
+    playKeySound();
+
     if (name === 'POWER') {
         const isOff = document.body.classList.toggle('power-off');
         btn.classList.toggle('mn-on', !isOff);
@@ -203,15 +246,17 @@ function buildKey(normal, shiftedLabel)
         btn.classList.add('mn-wide');
     }
 
-    btn.addEventListener('pointerdown', e => {
-        e.preventDefault();
+    btn.addEventListener('click', () => {
         onKey(normal, btn);
     });
 
     if (normal === 'REPT') {
         btn.addEventListener('pointerdown', () => {
             repeatTimer = setInterval(() => {
-                if (lastKey !== null) send(lastKey);
+                if (lastKey !== null) {
+                    send(lastKey);
+                    playKeySound();
+                }
             }, 120);
         });
         const stop = () => clearInterval(repeatTimer);
