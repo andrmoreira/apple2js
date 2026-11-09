@@ -186,6 +186,14 @@ export class Video {
                 }
             }
         }
+        
+        const { x: cursorX, y: cursorY } = this.getCursor();
+        if (this.flashOn) {
+            const px = cursorX * 14;
+            const py = cursorY * 16;
+            this.ctx.fillStyle = "#FFF";
+            this.ctx.fillRect(px, py, 14, 15);
+        }
     }
 
     renderTextMixed() {
@@ -250,6 +258,14 @@ export class Video {
                     }
                 }
             }
+        }
+        
+        const { x: cursorX, y: cursorY } = this.getCursor();
+        if (this.flashOn && cursorY >= 20) {
+            const px = cursorX * 14;
+            const py = (cursorY - 20) * 16 + 320;
+            this.ctx.fillStyle = "#FFF";
+            this.ctx.fillRect(px, py, 14, 15);
         }
     }
 
@@ -326,6 +342,13 @@ export class Video {
                 this.ctx.fillRect(col * 14, row * 16 + 8, 14, 8);
             }
         }
+    }
+
+    getCursor() {
+        return {
+            x: this.readMem(0x24),
+            y: this.readMem(0x25)
+        };
     }
 
     // Wozniak's text addressing
