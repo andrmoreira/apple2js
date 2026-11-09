@@ -32,8 +32,8 @@ html, body {
 }
 
 .bezel {
-    margin: 0;
-    padding: 0;
+    margin: 0 12px;
+    padding: 12px;
     background: #000000;
     border: 6px inset #f0edd0;
     border-radius: 10px;
