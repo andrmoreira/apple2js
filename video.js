@@ -57,6 +57,8 @@ export class Video {
         this.ctx.fillStyle = "#33FF66";
         this.ctx.font = "16px Courier New, monospace";
         this.ctx.textBaseline = "top";
+        this.ctx.save();
+        this.ctx.scale(1.4, 1.25);
 
         for (let row=0; row < 24; row++) {
             for (let col=0; col < 40; col++) {
@@ -64,9 +66,10 @@ export class Video {
                 let val = this.readMem(addr) & 0x7F;
                 if (val === 0) continue;
                 if (val < 0x20) val += 0x40;
-                this.ctx.fillText(String.fromCharCode(val), col * 14, row * 16);
+                this.ctx.fillText(String.fromCharCode(val), col * 10, row * 12.8);
             }
         }
+        this.ctx.restore();
     }
 
     renderTextMixed() {
@@ -77,6 +80,8 @@ export class Video {
         this.ctx.fillStyle = "#33FF66";
         this.ctx.font = "16px Courier New, monospace";
         this.ctx.textBaseline = "top";
+        this.ctx.save();
+        this.ctx.scale(1.4, 1.25);
 
         for (let row=20; row < 24; row++) {
             for (let col=0; col < 40; col++) {
@@ -84,9 +89,10 @@ export class Video {
                 let val = this.readMem(addr) & 0x7F;
                 if (val === 0) continue;
                 if (val < 0x20) val += 0x40;
-                this.ctx.fillText(String.fromCharCode(val), col * 14, row * 16);
+                this.ctx.fillText(String.fromCharCode(val), col * 10, row * 12.8);
             }
         }
+        this.ctx.restore();
     }
 
     renderHires() {
