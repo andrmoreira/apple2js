@@ -1,6 +1,6 @@
 {
-  "name": "Apple ][e",
-  "short_name": "a2e",
+  "name": "Apple][Js",
+  "short_name": "Apple][Js",
   "description": "Apple ][ Emulator in JavaScript",
   "start_url": "./",
   "display": "standalone",
