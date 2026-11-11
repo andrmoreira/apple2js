@@ -30,24 +30,6 @@ export class Memory {
     }
     
     loadRom(data, offset=0xD000) {
-        // BLOAD format: addr + len + payload
-        if (data.length > 4)
-        {
-            const lo = data[0] | (data[1] << 8);
-            const len = data[2] | (data[3] << 8);
-            const isBload = (len + 4 === data.length) || (len + 4 <= data.length && lo >= 0x0800 && lo < 0xC000 && len > 0);
-
-            if (isBload)
-            {
-                for (let i=0; i<len; i++)
-                {
-                    this.ram[lo+i] = data[4+i] & 0xFF;
-                }
-                //console.log(`BLOAD $${lo.toString(16)} len $${len.toString(16)}`);
-                return lo;
-            }
-        }
-
         for (let i=0; i<data.length; i++)
         {
             this.ram[offset+i] = data[i] & 0xFF;
