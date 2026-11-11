@@ -17,7 +17,6 @@ const cpu = new CPU6502(mem);
 
 // 1.022727 MHz / 60fps = 17045 cycles per frame
 const CYCLES_PER_FRAME = 17045;
-let lastTime = performance.now();
 
 window._mem = mem;
 window._cpu = cpu;
@@ -151,8 +150,6 @@ input.onchange = async (e) => {
 
 function frame() {
     if (powered) {
-        const now = performance.now();
-        lastTime = now;
         let cyclesToRun = CYCLES_PER_FRAME;
         let cycles = 0;
         
@@ -169,8 +166,6 @@ function frame() {
             speaker.advance(stepCycles);
         }
         video.render();
-    } else {
-        lastTime = performance.now();
     }
     requestAnimationFrame(frame);
 }
