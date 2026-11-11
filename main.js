@@ -36,7 +36,6 @@ window.setPower = (on) => {
     powered = on;
     if (!on) {
         mem.ram.fill(0, 0x0000, 0xC000);
-        mem.dirtyScanlines.fill(1);
         const ctx = canvas.getContext('2d');
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -113,7 +112,7 @@ function bootImage(buf)
             for (let i=0; i<len; i++) {
                 mem.ram[lo+i] = buf[4+i];
             }
-            mem.dirtyScanlines.fill(1);
+            
             video.write(0xC050);
             video.write(0xC057);
             bus.write(0xC050, 0);
