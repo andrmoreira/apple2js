@@ -53,7 +53,7 @@ window.setPower = (on) => {
 bus.hookIO(0xC030, 0xC030, () => speaker.toggle());
 
 // Video ($C050-$C057)
-bus.hookIO(0xC050, 0xC057, (addr, val, isWrite) => {
+bus.hookIO(0xC050, 0xC057, (addr) => {
     video.write(addr);
 });
 

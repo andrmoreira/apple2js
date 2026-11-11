@@ -68,7 +68,6 @@ const LAYOUT = [
 const CODES = {
     ESC: 0x1b,
     RETURN: 0x0d,
-    TAB: 0x09,
     ' ': 0x20,
     '←': 0x08,
     '→': 0x15

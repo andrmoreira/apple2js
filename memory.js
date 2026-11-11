@@ -43,7 +43,7 @@ export class Memory {
                 {
                     this.ram[lo+i] = data[4+i] & 0xFF;
                 }
-                console.log(`BLOAD $${lo.toString(16)} len $${len.toString(16)}`);
+                //console.log(`BLOAD $${lo.toString(16)} len $${len.toString(16)}`);
                 return lo;
             }
         }
