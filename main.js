@@ -150,7 +150,7 @@ input.onchange = async (e) => {
 
 function frame() {
     if (powered) {
-        let cyclesToRun = CYCLES_PER_FRAME;
+        const cyclesToRun = CYCLES_PER_FRAME;
         let cycles = 0;
         
         while (cycles < cyclesToRun) {
