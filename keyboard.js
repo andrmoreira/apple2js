@@ -241,7 +241,7 @@ function buildKey(normal, shiftedLabel)
     }
 
     if (normal === ' ') btn.classList.add('mn-space');
-    if (['RETURN', 'TAB', 'CTRL', 'SHIFT', 'RESET', 'REPT'].includes(normal)) {
+    if (['RETURN', 'CTRL', 'SHIFT', 'RESET', 'REPT'].includes(normal)) {
         btn.classList.add('mn-wide');
     }
 
