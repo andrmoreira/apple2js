@@ -79,7 +79,6 @@ const CHAR_ROM_DATA = buildCharRom();
 
 export class Video {
     constructor(canvas, bus) {
-        this.canvas=canvas;
         this.ctx = canvas.getContext("2d");
         this.bus=bus;
         this.mem=bus.mem;
