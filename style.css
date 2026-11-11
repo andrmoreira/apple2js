@@ -14,8 +14,8 @@ body {
 }
 
 html, body {
-  touch-action: none;
-  overscroll-behavior: none;
+    touch-action: none;
+    overscroll-behavior: none;
 }
 
 .case {
@@ -186,7 +186,7 @@ html, body {
 }
 
 #screen, #keyboard, .mn-btn {
-  touch-action: none;
+    touch-action: none;
 }
 
 footer {

@@ -3,12 +3,12 @@ const SPEAKER_LEVEL = 0.12;
 const BUFFER_SIZE = 1024;
 
 export class SpeakerAudio {
-    context = null;
-    node = null;
-    state = 0;
-    samples = [];
-    readIndex = 0;
-    cycleRemainder = 0;
+    context=null;
+    node=null;
+    state=0;
+    samples=[];
+    readIndex=0;
+    cycleRemainder=0;
 
     start() {
         if (!this.context) {

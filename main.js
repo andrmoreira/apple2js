@@ -180,19 +180,8 @@ function frame() {
     requestAnimationFrame(frame);
 }
 
-//function run()
-//{
-//    for (let i=0; i<1000; i++) {
-//        try {
-//            cpu.cpuStep();
-//        } catch (e) {}
-//    }
-//    setTimeout(run, 1);
-//}
-
 function init() {
     frame();
-    //run();
     
     document.body.classList.add('power-off');
     if (typeof window.setPower === 'function') {
