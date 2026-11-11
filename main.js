@@ -60,7 +60,6 @@ bus.hookIO(0xC050, 0xC057, (addr, val, isWrite) => {
 });
 
 let lastKeyTime = 0;
-let clearTimer = null;
 
 function pressEmuKey(code)
 {
@@ -74,10 +73,6 @@ function pressEmuKey(code)
     if (now - lastKeyTime < 120) return;
     lastKeyTime = now;
     bus.key = (c & 0x7F) | 0x80;
-    if (clearTimer) {
-        clearTimeout(clearTimer);
-    }
-    clearTimer = setTimeout(() => { bus.key &= 0x7F; }, 50);
 }
 
 window.pressEmuKey = pressEmuKey;
