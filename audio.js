@@ -2,7 +2,7 @@ const CPU_HZ = 1_022_727; // NTSC Apple II CPU clock in Hz
 const SPEAKER_LEVEL = 0.12;
 const BUFFER_SIZE = 1024;
 
-export class SpeakerAudio {
+export class Speaker {
     context=null;
     node=null;
     state=0;

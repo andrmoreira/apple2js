@@ -1,6 +1,6 @@
 import {Bus} from './bus.js';
 import {Video} from './video.js';
-import {SpeakerAudio} from './audio.js';
+import {Speaker} from './audio.js';
 import {CPU6502} from './lib/cpu6502/cpu.js';
 import {Memory} from './memory.js';
 import {rom} from './rom.js';
@@ -12,7 +12,7 @@ const canvas = document.getElementById('screen');
 const mem = new Memory();
 const bus = new Bus(mem);
 const video = new Video(canvas, bus);
-const speaker = new SpeakerAudio();
+const speaker = new Speaker();
 const cpu = new CPU6502(mem);
 
 // 1.022727 MHz / 60fps = 17045 cycles per frame
@@ -171,6 +171,12 @@ function init() {
     if (typeof window.setPower === 'function') {
         window.setPower(false);
     }
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            document.body.classList.add('ready');
+        });
+    });
 }
 
 init();
