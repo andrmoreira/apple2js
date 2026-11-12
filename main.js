@@ -57,8 +57,6 @@ bus.hookIO(0xC050, 0xC057, (addr) => {
     video.write(addr);
 });
 
-let lastKeyTime = 0;
-
 function pressEmuKey(code)
 {
     speaker.start();
@@ -67,9 +65,6 @@ function pressEmuKey(code)
     if (c === 13 || c === 10) c = 13;
     if (c >= 97 && c <= 122) c -= 32;
     if (c < 32 && c !== 7 && c !== 8 && c !== 9 && c !== 10 && c !== 11 && c !== 13 && c !== 21 && c !== 27) return;
-    const now = Date.now();
-    if (now - lastKeyTime < 120) return;
-    lastKeyTime = now;
     bus.key = (c & 0x7F) | 0x80;
 }
 
