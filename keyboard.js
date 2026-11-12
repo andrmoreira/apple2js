@@ -143,7 +143,7 @@ function onKey(name, btn)
 
     if (name === 'POWER') {
         const isOff = document.body.classList.toggle('power-off');
-        btn.classList.toggle('mn-on', !isOff);
+        btn.classList.toggle('kb-on', !isOff);
         if (typeof window.setPower === 'function') {
             window.setPower(!isOff);
         }
@@ -204,16 +204,16 @@ function onKey(name, btn)
 // Visual state
 function sync()
 {
-    document.querySelectorAll('[data-mn="SHIFT"]').forEach(el => el.classList.toggle('mn-on', shifted));
-    document.querySelectorAll('[data-mn="CTRL"]').forEach(el => el.classList.toggle('mn-on', controlled));
+    document.querySelectorAll('[data-kb="SHIFT"]').forEach(el => el.classList.toggle('kb-on', shifted));
+    document.querySelectorAll('[data-kb="CTRL"]').forEach(el => el.classList.toggle('kb-on', controlled));
 }
 
 function flash(btn)
 {
-    btn.classList.add('mn-on');
+    btn.classList.add('kb-on');
     setTimeout(() => {
-        const n = btn.dataset.mn;
-        if (n !== 'SHIFT' && n !== 'CTRL') btn.classList.remove('mn-on');
+        const n = btn.dataset.kb;
+        if (n !== 'SHIFT' && n !== 'CTRL') btn.classList.remove('kb-on');
     }, 110);
 }
 
@@ -222,27 +222,27 @@ function buildKey(normal, shiftedLabel)
 {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'mn-btn';
-    btn.dataset.mn = normal;
+    btn.className = 'kb-btn';
+    btn.dataset.kb = normal;
 
     if (normal !== shiftedLabel) {
         const up = document.createElement('span');
-        up.className = 'mn-up';
+        up.className = 'kb-up';
         up.textContent = shiftedLabel;
         const down = document.createElement('span');
-        down.className = 'mn-down';
+        down.className = 'kb-down';
         down.textContent = normal;
         btn.append(up, down);
     } else {
         const label = document.createElement('span');
-        label.className = 'mn-down';
+        label.className = 'kb-down';
         label.textContent = normal === ' ' ? '' : normal;
         btn.append(label);
     }
 
-    if (normal === ' ') btn.classList.add('mn-space');
+    if (normal === ' ') btn.classList.add('kb-space');
     if (['RETURN', 'CTRL', 'SHIFT', 'RESET', 'REPT'].includes(normal)) {
-        btn.classList.add('mn-wide');
+        btn.classList.add('kb-wide');
     }
 
     btn.addEventListener('click', () => {
@@ -274,7 +274,7 @@ export function mountKeyboard(container)
     root.innerHTML = '';
     for (const rowData of LAYOUT) {
         const row = document.createElement('div');
-        row.className = 'mn-line';
+        row.className = 'kb-line';
         for (const [normal, shiftedLabel] of rowData) {
             row.appendChild(buildKey(normal, shiftedLabel));
         }

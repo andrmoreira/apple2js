@@ -74,7 +74,7 @@ html, body {
     min-height: 220px;
 }
 
-.mn-line {
+.kb-line {
     display: flex;
     gap: 0;
     flex-wrap: nowrap;
@@ -82,7 +82,7 @@ html, body {
     align-items: stretch;
 }
 
-.mn-btn {
+.kb-btn {
     flex: 1;
     min-width: 0;
     flex-shrink: 1;
@@ -111,16 +111,16 @@ html, body {
     touch-action: none;
 }
 
-.mn-btn:not(.mn-space):not(.mn-wide) {
+.kb-btn:not(.kb-space):not(.kb-wide) {
     aspect-ratio: 1 / 1;
 }
 
-.mn-btn[data-mn="RESET"],
-.mn-btn[data-mn="CTRL"],
-.mn-btn[data-mn="SHIFT"],
-.mn-btn[data-mn="ESC"],
-.mn-btn[data-mn="REPT"],
-.mn-btn[data-mn="RETURN"] {
+.kb-btn[data-kb="RESET"],
+.kb-btn[data-kb="CTRL"],
+.kb-btn[data-kb="SHIFT"],
+.kb-btn[data-kb="ESC"],
+.kb-btn[data-kb="REPT"],
+.kb-btn[data-kb="RETURN"] {
     background: #4a3b2a;
     color: #f0e8d0;
     border-left: 6px solid #6b5a43;
@@ -130,8 +130,8 @@ html, body {
     border-radius: 0;
 }
 
-.mn-btn:active,
-.mn-btn.mn-on {
+.kb-btn:active,
+.kb-btn.kb-on {
     background: #3a2d1f;
     border-left: 6px solid #1a120a;
     border-top: 6px solid #1a120a;
@@ -140,22 +140,22 @@ html, body {
     border-radius: 0;
 }
 
-.mn-up {
+.kb-up {
     font-size: 8px;
     color: #f0e8d0;
 }
 
-.mn-down {
+.kb-down {
     font-size: 12px;
 }
 
-.mn-wide {
+.kb-wide {
     flex: 1.6;
     aspect-ratio: auto;
     align-self: stretch;
 }
 
-.mn-space {
+.kb-space {
     flex: 0 0 58%;
     min-width: 0;
     width: auto;
@@ -172,7 +172,7 @@ html, body {
     border-radius: 0;
 }
 
-.mn-btn[data-mn="POWER"] {
+.kb-btn[data-kb="POWER"] {
     flex: 0 0 44px;
     height: 44px;
     aspect-ratio: 1 / 1;
@@ -184,14 +184,14 @@ html, body {
     box-shadow: none;
 }
 
-.mn-btn[data-mn="POWER"]:active,
-.mn-btn[data-mn="POWER"].mn-on {
+.kb-btn[data-kb="POWER"]:active,
+.kb-btn[data-kb="POWER"].kb-on {
     background: #f0edd0;
     border: 2px solid #8a8570;
     box-shadow: none;
 }
 
-#screen, #keyboard, .mn-btn {
+#screen, #keyboard, .kb-btn {
     touch-action: none;
 }
 
