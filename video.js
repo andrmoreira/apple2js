@@ -102,7 +102,7 @@ export class Video {
                         if (!on) continue;
                         if (mode === "inverse") this.ctx.fillStyle = "#000";
                         else this.ctx.fillStyle = "#FFF";
-                        this.ctx.fillRect(px + x * 2 + 2, py + y * 2, 2, 2);
+                        this.ctx.fillRect(px + x * 2 + 2, py + y * 2, 4, 1);
                     }
                 }
             }
@@ -175,7 +175,7 @@ export class Video {
                         }
     
                         this.ctx.fillStyle = color;
-                        this.ctx.fillRect(px + x * 2 + 2, py + y * 2, 2, 2);
+                        this.ctx.fillRect(px + x * 2 + 2, py + y * 2, 4, 1);
                     }
                 }
             }
@@ -220,7 +220,7 @@ export class Video {
                         }
     
                         this.ctx.fillStyle = color;
-                        this.ctx.fillRect(xByte * 14 + bit * 2, y * 2, 2, 2);
+                        this.ctx.fillRect(xByte * 14 + bit * 2, y * 2, 4, 1);
                     }
                 }
             }

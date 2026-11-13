@@ -5,6 +5,7 @@ import {CPU6502} from './lib/cpu6502/cpu.js';
 import {Memory} from './memory.js';
 import {rom} from './rom.js';
 import {mountKeyboard} from './keyboard.js';
+import {CRTFilterWebGL} from './CRTFilter.js';
 
 mountKeyboard('#keyboard');
 
@@ -14,6 +15,25 @@ const bus = new Bus(mem);
 const video = new Video(canvas, bus);
 const speaker = new Speaker();
 const cpu = new CPU6502(mem);
+
+const crt = new CRTFilterWebGL(canvas, {
+  retraceLines: true,
+  dotMask: false,
+  barrelDistortion: 0,
+  curvature: 0,
+  chromaticAberration: 0,
+  glowBloom: 0.02,
+  brightness: 1.0,
+  contrast: 1.0,
+  desaturation: 0.10,
+  flicker: 0.01,
+  verticalJitter: 0,
+  staticNoise: 0.005,
+  horizontalTearing: 0,
+  signalLoss: 0,
+  scanlineIntensity: 0.25
+});
+crt.start();
 
 // 1.022727 MHz / 60fps = 17045 cycles per frame
 const CYCLES_PER_FRAME = 17045;
