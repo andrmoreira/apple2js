@@ -14,7 +14,9 @@ const APP_FILES = [
     './char-rom.js',
     './keyboard.js',
     './memory.js',
-    './video.js'
+    './video.js',
+    './tac.mp3',
+    './lib/cpu6502/cpu.js'
 ];
 
 const appUrl = (path) => new URL(path, self.registration.scope).href;
