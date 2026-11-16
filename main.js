@@ -240,23 +240,4 @@ async function init() {
     });
 }
 
-const toggleBtn = document.getElementById('toggleView');
-const crtEl = document.getElementById('crt');
-if (toggleBtn) {
-    toggleBtn.onclick = () => {
-        showRaw = !showRaw;
-        pauseShader = showRaw;
-        if (showRaw) {
-            crtEl.style.display = 'none';
-            canvas.style.display = 'block';
-            canvas.style.width = '100%';
-            canvas.style.aspectRatio = '560 / 384';
-            canvas.style.height = 'auto';
-        } else {
-            crtEl.style.display = 'block';
-            canvas.style.display = 'none';
-        }
-    };
-}
-
 init();
