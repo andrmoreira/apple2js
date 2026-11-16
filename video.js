@@ -1,7 +1,7 @@
 import {CHAR_ROM_DATA} from './char-rom.js';
 
 const YUV_WHITE = "rgb(255,128,128)";
-const YUV_BLACK = "rgb(0,128,128)";
+const YUV_BLACK = "#000";
 
 export class Video {
     constructor(canvas, bus) {
