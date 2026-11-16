@@ -178,8 +178,8 @@ function frame() {
                     displayConfig.videoDecoder = want;
                     displayConfig.displayBarrel = 0;
                     displayConfig.displayOverscan = 0;
-                    displayConfig.displayScanlineLevel = 0.05;
-                    displayConfig.displayShadowMaskLevel = 0.05;
+                    displayConfig.displayScanlineLevel = 0;
+                    displayConfig.displayShadowMaskLevel = 0;
                     sv.displayConfiguration = displayConfig;
                 }
                 if (!padCanvas) {
