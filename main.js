@@ -188,7 +188,7 @@ function frame() {
                     padCanvas.height = 416;
                     padCtx = padCanvas.getContext('2d');
                 }
-                padCtx.fillStyle = currentDecoder === "CANVAS_YUV" ? "rgb(0,128,128)" : "#000";
+                padCtx.fillStyle = "#000";
                 padCtx.fillRect(0, 0, 592, 416);
                 padCtx.drawImage(canvas, 16, 16);
                 const imageData = padCtx.getImageData(0, 0, 592, 416);
