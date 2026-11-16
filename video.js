@@ -1,4 +1,15 @@
 import {CHAR_ROM_DATA} from './char-rom.js';
+
+function rgbToYuvCss(r, g, b) {
+    const y = 16 + 0.859 * (0.299 * r + 0.587 * g + 0.114 * b);
+    const u = 128 + 0.878 * (-0.168736 * r - 0.331264 * g + 0.5 * b);
+    const v = 128 + 0.878 * (0.5 * r - 0.418688 * g - 0.081312 * b);
+    return `rgb(${y | 0},${u | 0},${v | 0})`;
+}
+
+const YUV_WHITE = rgbToYuvCss(255, 255, 255);
+const YUV_BLACK = rgbToYuvCss(0, 0, 0);
+
 export class Video {
     constructor(canvas, bus) {
         this.ctx = canvas.getContext("2d");
@@ -12,7 +23,7 @@ export class Video {
         this.flashOn=true;
         setInterval(() => { this.flashOn = !this.flashOn; }, 250);
 
-        this.ctx.fillStyle = "#000";
+        this.ctx.fillStyle = YUV_BLACK;
         this.ctx.fillRect(0, 0, 560, 384);
     }
     
@@ -120,7 +131,7 @@ export class Video {
     renderTextMixed() {
         const base = 0x0400;
         // 4x40 bottom mixed mode
-        this.ctx.fillStyle = "#000";
+        this.ctx.fillStyle = YUV_BLACK;
         this.ctx.fillRect(0, 320, 560, 64);
     
         for (let row=20; row < 24; row++) {
@@ -149,7 +160,7 @@ export class Video {
                 const py = (row - 20) * 16 + 320;
     
                 if (mode === "inverse") {
-                    this.ctx.fillStyle = "#FFF";
+                    this.ctx.fillStyle = YUV_WHITE;
                     this.ctx.fillRect(px, py, 14, 16);
                 }
     
@@ -160,19 +171,8 @@ export class Video {
                         if (mode === "inverse") on = !bitOn;
                         if (!on) continue;
                         
-                        let color = "#FFF";
-                        if (mode === "inverse") color = "#000";
-                        else if (this.isGR) {
-                            const leftOn = x > 0 ? (glyph[y] >> (4 - (x - 1))) & 1 : 0;
-                            const rightOn = x < 4 ? (glyph[y] >> (4 - (x + 1))) & 1 : 0;
-                            if (!leftOn && rightOn) {
-                                color = "#B653FF";
-                            } else if (leftOn && !rightOn) {
-                                color = "#00FF00";
-                            } else {
-                                color = "#FFF";
-                            }
-                        }
+                        let color = YUV_WHITE;
+                        if (mode === "inverse") color = YUV_BLACK;
     
                         this.ctx.fillStyle = color;
                         this.ctx.fillRect(px + x * 2 + 2, py + y * 2, 2, 2);
@@ -185,7 +185,7 @@ export class Video {
         if (this.flashOn && cursorY >= 20) {
             const px = cursorX * 14;
             const py = (cursorY - 20) * 16 + 320;
-            this.ctx.fillStyle = "#FFF";
+            this.ctx.fillStyle = YUV_WHITE;
             this.ctx.fillRect(px, py, 14, 15);
         }
     }
@@ -193,34 +193,19 @@ export class Video {
     renderHires() {
         // 280x192 hires mode
         const base = this.page === 1 ? 0x2000 : 0x4000;
-        this.ctx.fillStyle = "#000";
+        this.ctx.fillStyle = YUV_BLACK;
         this.ctx.fillRect(0, 0, 560, 384);
     
         for (let y=0; y < 192; y++) {
             for (let xByte=0; xByte < 40; xByte++) {
                 const addr = base + this.hiresOffset(y, xByte);
                 const byte = this.readMem(addr);
-                const palette = (byte & 0x80) ? 1 : 0;
+                const phaseShift = (byte & 0x80) ? 1 : 0;
     
                 for (let bit=0; bit < 7; bit++) {
                     if (byte & (1 << bit)) {
-                        const x = xByte * 7 + bit;
-                        const left = bit > 0 ? (byte >> (bit - 1)) & 1 : 0;
-    
-                        let color;
-                        if (left) {
-                            color = "#FFF";
-                        } else {
-                            // isolated bit - artifact color
-                            if ((x & 1) === 0) {
-                                color = palette ? "#0B4FBA" : "#8C1D92";
-                            } else {
-                                color = palette ? "#FF6D00" : "#0CC00A";
-                            }
-                        }
-    
-                        this.ctx.fillStyle = color;
-                        this.ctx.fillRect(xByte * 14 + bit * 2, y * 2, 2, 2);
+                        this.ctx.fillStyle = YUV_WHITE;
+                        this.ctx.fillRect(xByte * 14 + bit * 2 + phaseShift, y * 2, 2, 2);
                     }
                 }
             }
@@ -230,7 +215,7 @@ export class Video {
     renderLores() {
         // 40x48 lo-res mode
         const base = this.page === 1 ? 0x0400 : 0x0800;
-        this.ctx.fillStyle = "#000";
+        this.ctx.fillStyle = YUV_BLACK;
         this.ctx.fillRect(0, 0, 560, 384);
         
         // lo-res color table
@@ -253,13 +238,20 @@ export class Video {
             "#FFF"
         ];
 
+        const yuvColors = colors.map(hex => {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return rgbToYuvCss(r, g, b);
+        });
+
         for (let row=0; row < 24; row++) {
             for (let col=0; col < 40; col++) {
                 const addr = base + this.textOffset(row, col);
                 const val = this.readMem(addr);
-                this.ctx.fillStyle = colors[(val >> 4) & 0x0F];
+                this.ctx.fillStyle = yuvColors[(val >> 4) & 0x0F];
                 this.ctx.fillRect(col * 14, row * 16, 14, 8);
-                this.ctx.fillStyle = colors[val & 0x0F];
+                this.ctx.fillStyle = yuvColors[val & 0x0F];
                 this.ctx.fillRect(col * 14, row * 16 + 8, 14, 8);
             }
         }

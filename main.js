@@ -15,6 +15,13 @@ const video = new Video(canvas, bus);
 const speaker = new Speaker();
 const cpu = new CPU6502(mem);
 
+let sv = null;
+let currentDecoder = "CANVAS_YUV";
+let padCanvas = null;
+let padCtx = null;
+let showRaw = false;
+let pauseShader = false;
+
 // 1.022727 MHz / 60fps = 17045 cycles per frame
 const CYCLES_PER_FRAME = 17045;
 
@@ -160,23 +167,96 @@ function frame() {
             speaker.advance(stepCycles);
         }
         video.render();
+
+        if (sv && !pauseShader) {
+            try {
+                const want = video.text ? "CANVAS_RGB" : "CANVAS_YUV";
+                if (want !== currentDecoder) {
+                    currentDecoder = want;
+                    const displayConfig = new screenEmu.DisplayConfiguration();
+                    displayConfig.displayResolution = new screenEmu.Size(592, 416);
+                    displayConfig.videoDecoder = want;
+                    displayConfig.displayBarrel = 0;
+                    displayConfig.displayOverscan = 0;
+                    displayConfig.displayScanlineLevel = 0.05;
+                    displayConfig.displayShadowMaskLevel = 0.05;
+                    sv.displayConfiguration = displayConfig;
+                }
+                if (!padCanvas) {
+                    padCanvas = document.createElement('canvas');
+                    padCanvas.width = 592;
+                    padCanvas.height = 416;
+                    padCtx = padCanvas.getContext('2d');
+                }
+                padCtx.fillStyle = '#000';
+                padCtx.fillRect(0, 0, 592, 416);
+                padCtx.drawImage(canvas, 16, 16);
+                const imageData = padCtx.getImageData(0, 0, 592, 416);
+                sv.image = new screenEmu.ImageInfo(imageData);
+                sv.vsync();
+            } catch (e) {
+            }
+        }
     }
     requestAnimationFrame(frame);
 }
 
-function init() {
-    frame();
-    
-    document.body.classList.add('power-off');
-    if (typeof window.setPower === 'function') {
-        window.setPower(false);
+async function init() {
+    const crtCanvas = document.getElementById('crt');
+
+    canvas.width = 560;
+    canvas.height = 384;
+    if (crtCanvas) {
+        crtCanvas.width = 592;
+        crtCanvas.height = 416;
     }
 
+    try {
+        if (crtCanvas && typeof screenEmu !== 'undefined') {
+            sv = new screenEmu.ScreenView(crtCanvas);
+            await sv.initOpenGL();
+            const displayConfig = new screenEmu.DisplayConfiguration();
+            displayConfig.displayResolution = new screenEmu.Size(592, 416);
+            displayConfig.videoDecoder = "CANVAS_YUV";
+            displayConfig.displayBarrel = 0;
+            displayConfig.displayOverscan = 0;
+            displayConfig.displayScanlineLevel = 0.05;
+            displayConfig.displayShadowMaskLevel = 0.05;
+            sv.displayConfiguration = displayConfig;
+        } else {
+            sv = null;
+        }
+    } catch (e) {
+        sv = null;
+    }
+
+    frame();
+    document.body.classList.add('power-off');
+    if (typeof window.setPower === 'function') window.setPower(false);
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             document.body.classList.add('ready');
         });
     });
+}
+
+const toggleBtn = document.getElementById('toggleView');
+const crtEl = document.getElementById('crt');
+if (toggleBtn) {
+    toggleBtn.onclick = () => {
+        showRaw = !showRaw;
+        pauseShader = showRaw;
+        if (showRaw) {
+            crtEl.style.display = 'none';
+            canvas.style.display = 'block';
+            canvas.style.width = '100%';
+            canvas.style.aspectRatio = '560 / 384';
+            canvas.style.height = 'auto';
+        } else {
+            crtEl.style.display = 'block';
+            canvas.style.display = 'none';
+        }
+    };
 }
 
 init();
