@@ -1,14 +1,7 @@
 import {CHAR_ROM_DATA} from './char-rom.js';
 
-function rgbToYuvCss(r, g, b) {
-    const y = 16 + 0.859 * (0.299 * r + 0.587 * g + 0.114 * b);
-    const u = 128 + 0.878 * (-0.168736 * r - 0.331264 * g + 0.5 * b);
-    const v = 128 + 0.878 * (0.5 * r - 0.418688 * g - 0.081312 * b);
-    return `rgb(${y | 0},${u | 0},${v | 0})`;
-}
-
-const YUV_WHITE = rgbToYuvCss(255, 255, 255);
-const YUV_BLACK = rgbToYuvCss(0, 0, 0);
+const YUV_WHITE = "rgb(255,128,128)";
+const YUV_BLACK = "rgb(0,128,128)";
 
 export class Video {
     constructor(canvas, bus) {
@@ -23,7 +16,7 @@ export class Video {
         this.flashOn=true;
         setInterval(() => { this.flashOn = !this.flashOn; }, 250);
 
-        this.ctx.fillStyle = YUV_BLACK;
+        this.ctx.fillStyle = "#000";
         this.ctx.fillRect(0, 0, 560, 384);
     }
     
@@ -217,42 +210,31 @@ export class Video {
         const base = this.page === 1 ? 0x0400 : 0x0800;
         this.ctx.fillStyle = YUV_BLACK;
         this.ctx.fillRect(0, 0, 560, 384);
-        
-        // lo-res color table
-        const colors = [
-            "#000",
-            "#8C1D92",
-            "#1506A9",
-            "#C62CD7",
-            "#00724E",
-            "#4E4E4E",
-            "#0B4FBA",
-            "#66B0F0",
-            "#7A4F00",
-            "#FF6D00",
-            "#8C8C8C",
-            "#FF9DB2",
-            "#0CC00A",
-            "#F5FF4A",
-            "#5ED0FF",
-            "#FFF"
-        ];
 
-        const yuvColors = colors.map(hex => {
-            const r = parseInt(hex.slice(1, 3), 16);
-            const g = parseInt(hex.slice(3, 5), 16);
-            const b = parseInt(hex.slice(5, 7), 16);
-            return rgbToYuvCss(r, g, b);
-        });
+        const maxRow = this.mixed ? 20 : 24;
 
-        for (let row=0; row < 24; row++) {
+        for (let row=0; row < maxRow; row++) {
             for (let col=0; col < 40; col++) {
                 const addr = base + this.textOffset(row, col);
                 const val = this.readMem(addr);
-                this.ctx.fillStyle = yuvColors[(val >> 4) & 0x0F];
-                this.ctx.fillRect(col * 14, row * 16, 14, 8);
-                this.ctx.fillStyle = yuvColors[val & 0x0F];
-                this.ctx.fillRect(col * 14, row * 16 + 8, 14, 8);
+                const topColor = (val >> 4) & 0x0F;
+                const botColor = val & 0x0F;
+                const phaseShift = (col & 1) ? 2 : 0;
+
+                this.drawLoresBlock(col * 14, row * 16, topColor, phaseShift);
+                this.drawLoresBlock(col * 14, row * 16 + 8, botColor, phaseShift);
+            }
+        }
+    }
+
+    drawLoresBlock(px, py, colorIdx, phaseShift) {
+        if (colorIdx === 0) return;
+        this.ctx.fillStyle = YUV_WHITE;
+
+        for (let x=0; x < 14; x++) {
+            const bit = (x + phaseShift) & 3;
+            if ((colorIdx >> bit) & 1) {
+                this.ctx.fillRect(px + x, py, 1, 8);
             }
         }
     }
