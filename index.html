@@ -26,6 +26,11 @@
         <input type="file" id="rom" hidden>
         <div id="keyboard"></div>
     </div>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js');
+        }
+    </script>
     <script src="rom.js"></script>
     <script src="lib/apple2shader/screenEmu.js"></script>
     <script type="module" src="main.js"></script>
