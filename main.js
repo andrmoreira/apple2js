@@ -19,11 +19,21 @@ let sv = null;
 let currentDecoder = "CANVAS_YUV";
 let padCanvas = null;
 let padCtx = null;
+let displayConfig = null;
 let showRaw = false;
 let pauseShader = false;
+let shaderBusy = false;
+let shaderIntervalMs = 1000 / 30;
+let lastShaderTime = 0;
+let lastCpuTime = 0;
+let cpuAccumulator = 0;
+let lastVideoState = "";
+let shaderFrames = 0;
+let shaderTimeTotal = 0;
 
 // 1.022727 MHz / 60fps = 17045 cycles per frame
 const CYCLES_PER_FRAME = 17045;
+const CPU_HZ = 1022727;
 
 window._mem = mem;
 window._cpu = cpu;
@@ -151,7 +161,14 @@ input.onchange = async (e) => {
 
 function frame() {
     if (powered) {
-        const cyclesToRun = CYCLES_PER_FRAME;
+        const now = performance.now();
+        let elapsed = now - lastCpuTime;
+        lastCpuTime = now;
+        if (elapsed > 100) elapsed = 100;
+        if (elapsed < 0) elapsed = 0;
+        cpuAccumulator += (elapsed / 1000) * CPU_HZ;
+        if (cpuAccumulator > CPU_HZ * 0.1) cpuAccumulator = CPU_HZ * 0.1;
+        const cyclesToRun = Math.floor(cpuAccumulator);
         let cycles = 0;
         
         while (cycles < cyclesToRun) {
@@ -166,27 +183,43 @@ function frame() {
             cycles += stepCycles;
             speaker.advance(stepCycles);
         }
+        cpuAccumulator -= cycles;
+        if (cpuAccumulator < 0) cpuAccumulator = 0;
         video.render();
+    }
+    requestAnimationFrame(frame);
+}
 
-        if (sv && !pauseShader) {
+function shaderLoop(now) {
+    if (!powered) {
+        requestAnimationFrame(shaderLoop);
+        return;
+    }
+    if (sv && !pauseShader && !shaderBusy) {
+        const state = (video.text ? "T" : "G") + (video.hires ? "H" : "L") + (video.page || 1) + (video.mixed ? "M" : "");
+        const stateChanged = state !== lastVideoState;
+        
+        if (stateChanged) {
+            lastVideoState = state;
+            const want = video.text ? "CANVAS_RGB" : "CANVAS_YUV";
+            if (want !== currentDecoder) {
+                currentDecoder = want;
+                displayConfig.videoDecoder = want;
+                sv.displayConfiguration = displayConfig;
+            }
+        }
+        const sinceLast = now - lastShaderTime;
+        const shouldRender = stateChanged || sinceLast >= shaderIntervalMs;
+        if (shouldRender) {
+            lastShaderTime = now;
+            shaderBusy = true;
+            const t0 = performance.now();
             try {
-                const want = video.text ? "CANVAS_RGB" : "CANVAS_YUV";
-                if (want !== currentDecoder) {
-                    currentDecoder = want;
-                    const displayConfig = new screenEmu.DisplayConfiguration();
-                    displayConfig.displayResolution = new screenEmu.Size(592, 416);
-                    displayConfig.videoDecoder = want;
-                    displayConfig.displayBarrel = 0;
-                    displayConfig.displayOverscan = 0;
-                    displayConfig.displayScanlineLevel = 0;
-                    displayConfig.displayShadowMaskLevel = 0;
-                    sv.displayConfiguration = displayConfig;
-                }
                 if (!padCanvas) {
                     padCanvas = document.createElement('canvas');
                     padCanvas.width = 592;
                     padCanvas.height = 416;
-                    padCtx = padCanvas.getContext('2d');
+                    padCtx = padCanvas.getContext('2d', { willReadFrequently: true, alpha: false });
                 }
                 padCtx.fillStyle = "#000";
                 padCtx.fillRect(0, 0, 592, 416);
@@ -194,11 +227,29 @@ function frame() {
                 const imageData = padCtx.getImageData(0, 0, 592, 416);
                 sv.image = new screenEmu.ImageInfo(imageData);
                 sv.vsync();
-            } catch (e) {
+            } catch (e) {}
+            
+            const dur = performance.now() - t0;
+            shaderBusy = false;
+            shaderFrames++;
+            shaderTimeTotal += dur;
+            
+            if (shaderFrames >= 30) {
+                const avg = shaderTimeTotal / shaderFrames;  
+                shaderFrames=0;
+                shaderTimeTotal=0;
+                
+                if (avg > 20 && shaderIntervalMs < 1000 / 15) {
+                    shaderIntervalMs = 1000 / 15;
+                } else if (avg > 12 && shaderIntervalMs < 1000 / 20) {
+                    shaderIntervalMs = 1000 / 20;
+                } else if (avg < 8 && shaderIntervalMs > 1000 / 30) {
+                    shaderIntervalMs = 1000 / 30;
+                }
             }
         }
     }
-    requestAnimationFrame(frame);
+    requestAnimationFrame(shaderLoop);
 }
 
 async function init() {
@@ -215,13 +266,13 @@ async function init() {
         if (crtCanvas && typeof screenEmu !== 'undefined') {
             sv = new screenEmu.ScreenView(crtCanvas);
             await sv.initOpenGL();
-            const displayConfig = new screenEmu.DisplayConfiguration();
+            displayConfig = new screenEmu.DisplayConfiguration();
             displayConfig.displayResolution = new screenEmu.Size(592, 416);
             displayConfig.videoDecoder = "CANVAS_YUV";
-            displayConfig.displayBarrel = 0.05;
+            displayConfig.displayBarrel = 0;
             displayConfig.displayOverscan = 0;
-            displayConfig.displayScanlineLevel = 0.05;
-            displayConfig.displayShadowMaskLevel = 0.05;
+            displayConfig.displayScanlineLevel = 0;
+            displayConfig.displayShadowMaskLevel = 0;
             sv.displayConfiguration = displayConfig;
         } else {
             sv = null;
@@ -230,7 +281,11 @@ async function init() {
         sv = null;
     }
 
+    lastCpuTime = performance.now();
+    lastShaderTime = performance.now();
     frame();
+    requestAnimationFrame(shaderLoop);
+    
     document.body.classList.add('power-off');
     if (typeof window.setPower === 'function') window.setPower(false);
     requestAnimationFrame(() => {
