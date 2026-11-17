@@ -31,10 +31,6 @@ let shaderTimeTotal = 0;
 // 1.022727 MHz / 60fps = 17045 cycles per frame
 const CPU_HZ = 1022727;
 
-window._mem = mem;
-window._cpu = cpu;
-window._bus = bus;
-
 window.resetEmu = () => {
     if (typeof cpu.cpuReset === 'function')
         cpu.cpuReset();
@@ -43,15 +39,27 @@ window.resetEmu = () => {
     bus.key = 0;
 };
 
-let powered = true;
+let powered = false;
 
 window.setPower = (on) => {
     powered = on;
     if (!on) {
-        mem.ram.fill(0, 0x0000, 0xC000);
+        mem.ram.fill(0, 0, 0xC000);
+        bus.key = 0;
+        cpuAccumulator = 0;
+        lastVideoState = "";
         const ctx = canvas.getContext('2d');
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        if (sv && padCtx) {
+            try {
+                padCtx.fillStyle = "#000";
+                padCtx.fillRect(0,0,592,416);
+                sv.image = new screenEmu.ImageInfo(padCtx.getImageData(0,0,592,416));
+                sv.vsync();
+            } catch(e) {}
+        }
     } else {
         if (rom) {
             const buf = rom instanceof Uint8Array ? rom : new Uint8Array(rom);
