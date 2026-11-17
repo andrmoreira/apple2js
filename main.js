@@ -20,9 +20,6 @@ let currentDecoder = "CANVAS_YUV";
 let padCanvas = null;
 let padCtx = null;
 let displayConfig = null;
-let showRaw = false;
-let pauseShader = false;
-let shaderBusy = false;
 let shaderIntervalMs = 1000 / 30;
 let lastShaderTime = 0;
 let lastCpuTime = 0;
@@ -32,7 +29,6 @@ let shaderFrames = 0;
 let shaderTimeTotal = 0;
 
 // 1.022727 MHz / 60fps = 17045 cycles per frame
-const CYCLES_PER_FRAME = 17045;
 const CPU_HZ = 1022727;
 
 window._mem = mem;
@@ -125,8 +121,6 @@ function bootImage(buf)
                 mem.ram[lo+i] = buf[4+i];
             }
             
-            video.write(0xC050);
-            video.write(0xC057);
             bus.write(0xC050, 0);
             bus.write(0xC057, 0);
             cpu.PC = lo;
@@ -195,7 +189,7 @@ function shaderLoop(now) {
         requestAnimationFrame(shaderLoop);
         return;
     }
-    if (sv && !pauseShader && !shaderBusy) {
+    if (sv) {
         const state = (video.text ? "T" : "G") + (video.hires ? "H" : "L") + (video.page || 1) + (video.mixed ? "M" : "");
         const stateChanged = state !== lastVideoState;
         
@@ -212,7 +206,6 @@ function shaderLoop(now) {
         const shouldRender = stateChanged || sinceLast >= shaderIntervalMs;
         if (shouldRender) {
             lastShaderTime = now;
-            shaderBusy = true;
             const t0 = performance.now();
             try {
                 if (!padCanvas) {
@@ -230,7 +223,6 @@ function shaderLoop(now) {
             } catch (e) {}
             
             const dur = performance.now() - t0;
-            shaderBusy = false;
             shaderFrames++;
             shaderTimeTotal += dur;
             
@@ -269,10 +261,6 @@ async function init() {
             displayConfig = new screenEmu.DisplayConfiguration();
             displayConfig.displayResolution = new screenEmu.Size(592, 416);
             displayConfig.videoDecoder = "CANVAS_YUV";
-            displayConfig.displayBarrel = 0;
-            displayConfig.displayOverscan = 0;
-            displayConfig.displayScanlineLevel = 0;
-            displayConfig.displayShadowMaskLevel = 0;
             sv.displayConfiguration = displayConfig;
         } else {
             sv = null;
