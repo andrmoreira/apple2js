@@ -58,7 +58,7 @@ html, body {
     background: #d6d3be;
     border: 3px inset #f0edd0;
     border-radius: 10px;
-    padding: 6px 6px;
+    padding: 6px;
     display: flex;
     flex-direction: column;
     gap: 0;
@@ -69,30 +69,53 @@ html, body {
     -webkit-user-select: none;
     -webkit-touch-callout: none;
     touch-action: none;
-    min-height: 220px;
+    min-height: 200px;
 }
 
 .kb-line {
     display: flex;
     gap: 0;
+    margin-bottom: 0;
     flex-wrap: nowrap;
     width: 100%;
+    box-sizing: border-box;
     align-items: stretch;
 }
 
+.kb-line:last-child {
+    align-items: center;
+}
+
+.kb-line:nth-child(1) .kb-btn:first-child {
+    margin-left: 3.5714%;
+}
+
+.kb-line:nth-child(3) .kb-btn:first-child {
+    margin-left: 1.7857%;
+}
+
+.kb-line:nth-child(4) .kb-btn:first-child {
+    margin-left: 1.7857%;
+}
+
+.kb-line:nth-child(5) .kb-btn:first-child {
+    margin-left: 1.7857%;
+}
+
 .kb-btn {
-    flex: 1;
-    min-width: 0;
-    flex-shrink: 1;
+    flex: 0 0 7.1428%;
+    width: 7.1428%;
     height: auto;
-    padding: 0;
+    aspect-ratio: 1 / 1;
+    min-width: 0;
+    padding: 2px;
     background: #4a3b2a;
     color: #f0e8d0;
-    border-left: 6px solid #6b5a43;
-    border-top: 6px solid #6b5a43;
-    border-right: 6px solid #1a120a;
-    border-bottom: 9px solid #1a120a;
-    border-radius: 0;
+    border-left: 5px solid #6b5a43;
+    border-top: 5px solid #6b5a43;
+    border-right: 5px solid #1a120a;
+    border-bottom: 7px solid #1a120a;
+    border-radius: 3px;
     font-family: monospace;
     font-weight: bold;
     cursor: pointer;
@@ -100,17 +123,14 @@ html, body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    line-height: 1.1;
+    line-height: 1.05;
     overflow: hidden;
     white-space: nowrap;
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
     touch-action: none;
-}
-
-.kb-btn:not(.kb-space):not(.kb-wide) {
-    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
 }
 
 .kb-btn[data-kb="RESET"],
@@ -121,21 +141,49 @@ html, body {
 .kb-btn[data-kb="RETURN"] {
     background: #4a3b2a;
     color: #f0e8d0;
-    border-left: 6px solid #6b5a43;
-    border-top: 6px solid #6b5a43;
-    border-right: 6px solid #1a120a;
-    border-bottom: 9px solid #1a120a;
-    border-radius: 0;
+    border-left: 5px solid #6b5a43;
+    border-top: 5px solid #6b5a43;
+    border-right: 5px solid #1a120a;
+    border-bottom: 7px solid #1a120a;
+    border-radius: 3px;
+}
+
+.kb-btn[data-kb="RESET"] {
+    flex: 0 0 7.1428%;
+    width: 7.1428%;
+    aspect-ratio: 1 / 1;
+}
+
+.kb-btn[data-kb="RETURN"] {
+    flex: 0 0 10.7142%;
+    width: 10.7142%;
+    aspect-ratio: auto;
+    height: auto;
+}
+
+.kb-btn[data-kb="CTRL"],
+.kb-btn[data-kb="ESC"],
+.kb-btn[data-kb="REPT"] {
+    flex: 0 0 7.1428%;
+    width: 7.1428%;
+    aspect-ratio: 1 / 1;
+}
+
+.kb-btn[data-kb="SHIFT"] {
+    flex: 0 0 10.7142%;
+    width: 10.7142%;
+    aspect-ratio: auto;
+    height: auto;
 }
 
 .kb-btn:active,
 .kb-btn.kb-on {
     background: #3a2d1f;
-    border-left: 6px solid #1a120a;
-    border-top: 6px solid #1a120a;
-    border-right: 6px solid #6b5a43;
-    border-bottom: 6px solid #6b5a43;
-    border-radius: 0;
+    border-left: 5px solid #1a120a;
+    border-top: 5px solid #1a120a;
+    border-right: 5px solid #6b5a43;
+    border-bottom: 5px solid #6b5a43;
+    border-radius: 3px;
 }
 
 .kb-up {
@@ -148,37 +196,42 @@ html, body {
 }
 
 .kb-wide {
-    flex: 1.6;
+    flex: 0 0 10.7142%;
+    width: 10.7142%;
+    height: auto;
     aspect-ratio: auto;
-    align-self: stretch;
 }
 
 .kb-space {
-    flex: 0 0 58%;
+    flex: 0 0 57.1428%;
     min-width: 0;
-    width: auto;
-    margin: 0 auto;
-    align-self: stretch;
-    height: 44px;
+    width: 57.1428%;
+    margin-left: 12.5%;
+    margin-right: auto;
+    height: auto;
+    aspect-ratio: 8 / 1;
+    padding: 2px;
     display: flex;
-    aspect-ratio: auto;
     background: #5a4a33;
-    border-left: 6px solid #7a6a50;
-    border-top: 6px solid #7a6a50;
-    border-right: 6px solid #1a120a;
-    border-bottom: 9px solid #1a120a;
-    border-radius: 0;
+    border-left: 5px solid #7a6a50;
+    border-top: 5px solid #7a6a50;
+    border-right: 5px solid #1a120a;
+    border-bottom: 7px solid #1a120a;
+    border-radius: 3px;
+    box-sizing: border-box;
 }
 
 .kb-btn[data-kb="POWER"] {
-    flex: 0 0 44px;
-    height: 44px;
+    flex: 0 0 7.1428%;
+    width: 7.1428%;
+    height: auto;
     aspect-ratio: 1 / 1;
+    padding: 2px;
     background: #f0edd0;
     color: #1a1a1a;
     border: 2px solid #8a8570;
-    border-radius: 2px;
-    font-size: 10px;
+    border-radius: 3px;
+    font-size: 9px;
     box-shadow: none;
 }
 
