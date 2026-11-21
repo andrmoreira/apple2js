@@ -29,10 +29,22 @@ html, body {
 }
 
 .lid {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-size: 16px;
     padding: 10px 14px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    font-family: monospace, sans-serif;
+    font-weight: bold;
+}
+
+.apple-badge {
+    height: 20px;
+    width: auto;
+    flex-shrink: 0;
+    display: block;
 }
 
 .bezel {
@@ -52,6 +64,20 @@ html, body {
 
 #screen {
     display: none;
+}
+
+.drive-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.drive-logo {
+    margin-left: auto;
+    height: 45px;
+    width: auto;
+    display: block;
+    flex-shrink: 0;
 }
 
 #keyboard {
