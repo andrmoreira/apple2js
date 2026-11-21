@@ -1,6 +1,6 @@
 [submodule "lib/cpu6502"]
-	path = lib/cpu6502
+	path = submodules/cpu6502
 	url = https://github.com/andrmoreira/cpu6502.git
 [submodule "lib/apple2shader"]
-	path = lib/apple2shader
+	path = submodules/apple2shader
 	url = https://github.com/andrmoreira/apple2shader.git
