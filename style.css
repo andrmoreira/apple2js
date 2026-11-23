@@ -70,14 +70,22 @@ html, body {
     display: flex;
     align-items: center;
     gap: 8px;
+    margin: 8px 12px 0;
 }
 
 .drive-logo {
     margin-left: auto;
-    height: 45px;
+    height: 24px;
     width: auto;
     display: block;
     flex-shrink: 0;
+    padding: 3px 5px;
+    background: #c7c3ad;
+    border-top: 2px solid #8a8570;
+    border-left: 2px solid #8a8570;
+    border-right: 2px solid #f0edd0;
+    border-bottom: 2px solid #f0edd0;
+    border-radius: 2px;
 }
 
 #keyboard {
