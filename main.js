@@ -1,10 +1,10 @@
-import {Bus} from './bus.js';
-import {Video} from './video.js';
-import {Speaker} from './audio.js';
+import {Bus} from './src/bus.js';
+import {Video} from './src/video.js';
+import {Speaker} from './src/audio.js';
 import {CPU6502} from './submodules/cpu6502/cpu.js';
-import {Memory} from './memory.js';
-import {rom} from './rom.js';
-import {mountKeyboard} from './keyboard.js';
+import {Memory} from './src/memory.js';
+import {rom} from './src/rom.js';
+import {mountKeyboard} from './src/keyboard.js';
 
 mountKeyboard('#keyboard');
 
