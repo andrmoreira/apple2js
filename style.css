@@ -144,20 +144,17 @@ html, body {
     min-width: 0;
     padding: 2px;
     background: #4a3b2a;
-    color: #f0e8d0;
+    color: #f5f3ec;
     border-left: 5px solid #6b5a43;
     border-top: 5px solid #6b5a43;
     border-right: 5px solid #1a120a;
     border-bottom: 7px solid #1a120a;
     border-radius: 3px;
-    font-family: monospace;
-    font-weight: bold;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    line-height: 1.05;
+    justify-content: flex-end;
     overflow: hidden;
     white-space: nowrap;
     user-select: none;
@@ -174,12 +171,19 @@ html, body {
 .kb-btn[data-kb="REPT"],
 .kb-btn[data-kb="RETURN"] {
     background: #4a3b2a;
-    color: #f0e8d0;
     border-left: 5px solid #6b5a43;
     border-top: 5px solid #6b5a43;
     border-right: 5px solid #1a120a;
     border-bottom: 7px solid #1a120a;
     border-radius: 3px;
+    justify-content: center;
+}
+
+.kb-btn[data-kb="←"],
+.kb-btn[data-kb="→"] {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .kb-btn[data-kb="RESET"] {
@@ -210,6 +214,10 @@ html, body {
     height: auto;
 }
 
+.kb-btn[data-kb="G"] .kb-up {
+    font-size: 7px;
+}
+
 .kb-btn:active,
 .kb-btn.kb-on {
     background: #3a2d1f;
@@ -220,13 +228,21 @@ html, body {
     border-radius: 3px;
 }
 
+.kb-btn, .kb-down, .kb-up {
+    font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif !important;
+    text-shadow: none !important;
+}
+
 .kb-up {
-    font-size: 8px;
-    color: #f0e8d0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #f5f3ec;
 }
 
 .kb-down {
     font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
 }
 
 .kb-wide {
@@ -267,15 +283,25 @@ html, body {
     border-radius: 3px;
     font-size: 9px;
     box-shadow: none;
-}
-
-.kb-btn[data-kb="POWER"]:active,
-.kb-btn[data-kb="POWER"].kb-on {
-    background: #f0edd0;
-    border: 2px solid #8a8570;
-    box-shadow: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #crt, #screen, #keyboard, .kb-btn {
     touch-action: none;
+}
+
+.kb-btn[data-kb="ESC"] .kb-down,
+.kb-btn[data-kb="CTRL"] .kb-down,
+.kb-btn[data-kb="SHIFT"] .kb-down,
+.kb-btn[data-kb="REPT"] .kb-down,
+.kb-btn[data-kb="RETURN"] .kb-down,
+.kb-btn[data-kb="RESET"] .kb-down,
+.kb-btn[data-kb="POWER"] .kb-down {
+    font-size: 7px;
+}
+
+.kb-btn:not([data-kb="ESC"]):not([data-kb="CTRL"]):not([data-kb="SHIFT"]):not([data-kb="REPT"]):not([data-kb="RETURN"]):not([data-kb="RESET"]):not([data-kb="POWER"]) .kb-down {
+    font-size: 12px;
 }
