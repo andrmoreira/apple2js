@@ -1,5 +1,5 @@
 body {
-    background: #d6d3be;
+    background: #c4c1a0;
     color: #000;
     margin: 0;
     padding: 24px 12px 20px;
@@ -66,30 +66,8 @@ html, body {
     display: none;
 }
 
-.drive-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 8px 12px 0;
-}
-
-.drive-logo {
-    margin-left: auto;
-    height: 24px;
-    width: auto;
-    display: block;
-    flex-shrink: 0;
-    padding: 3px 5px;
-    background: #c7c3ad;
-    border-top: 2px solid #8a8570;
-    border-left: 2px solid #8a8570;
-    border-right: 2px solid #f0edd0;
-    border-bottom: 2px solid #f0edd0;
-    border-radius: 2px;
-}
-
 #keyboard {
-    background: #d6d3be;
+    background: #c4c1a0;
     border: 3px inset #f0edd0;
     border-radius: 10px;
     padding: 6px;
