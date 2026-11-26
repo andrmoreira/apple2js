@@ -282,8 +282,8 @@ async function init() {
     frame();
     requestAnimationFrame(shaderLoop);
     
-    document.body.classList.add('power-off');
-    if (typeof window.setPower === 'function') window.setPower(false);
+    window.setPower(true);
+
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             document.body.classList.add('ready');
